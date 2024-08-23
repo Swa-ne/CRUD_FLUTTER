@@ -18,3 +18,21 @@ class SendData extends FormEvent {
     this.enrolled,
   );
 }
+
+class UpdateData extends FormEvent {
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String course;
+  final String year;
+  final bool enrolled;
+
+  UpdateData(
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.course,
+    this.year,
+    this.enrolled,
+  );
+}

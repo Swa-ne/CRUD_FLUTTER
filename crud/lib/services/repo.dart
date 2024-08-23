@@ -50,6 +50,32 @@ class StudentRepo {
     }
   }
 
+  Future<StudentModel> putStudent(String firstName, String lastName,
+      String course, String year, bool enrolled, String id) async {
+    print("$apiUrl/update/$id");
+    final response = await http.put(
+      Uri.parse("$apiUrl/update/$id"),
+      body: {
+        'first_name': firstName,
+        'last_name': lastName,
+        'course': course,
+        'year': year,
+        'enrolled': enrolled.toString(),
+      },
+    );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      dynamic studentJSON = data['message'];
+
+      StudentModel students = StudentModel.fromJson(studentJSON);
+      return students;
+    } else {
+      const SnackBar(content: Text("Server Error"));
+      throw Exception('Failed');
+    }
+  }
+
   Future<void> deleteStudent(String id) async {
     try {
       final response = await http.delete(Uri.parse('$apiUrl/delete/$id'));

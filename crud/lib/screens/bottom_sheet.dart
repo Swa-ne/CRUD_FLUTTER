@@ -6,7 +6,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BottomSheetWidget extends StatefulWidget {
-  const BottomSheetWidget({super.key});
+  final String? id;
+  final String? firstName;
+  final String? lastName;
+  final String? course;
+  final String? year;
+  final bool? enrolled;
+
+  const BottomSheetWidget({
+    super.key,
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.course,
+    this.year,
+    this.enrolled,
+  });
 
   @override
   State<BottomSheetWidget> createState() => _BottomSheetWidgetState();
@@ -14,11 +29,22 @@ class BottomSheetWidget extends StatefulWidget {
 
 class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController firstNameTextController = TextEditingController();
-  final TextEditingController lastNameTextController = TextEditingController();
-  final TextEditingController courseTextController = TextEditingController();
-  final TextEditingController yearTextController = TextEditingController();
-  bool enrolledValue = false;
+  late TextEditingController firstNameTextController;
+  late TextEditingController lastNameTextController;
+  late TextEditingController courseTextController;
+  late TextEditingController yearTextController;
+  late bool enrolledValue;
+
+  @override
+  void initState() {
+    super.initState();
+    firstNameTextController =
+        TextEditingController(text: widget.firstName ?? "");
+    lastNameTextController = TextEditingController(text: widget.lastName ?? "");
+    courseTextController = TextEditingController(text: widget.course ?? "");
+    yearTextController = TextEditingController(text: widget.year ?? "");
+    enrolledValue = widget.enrolled ?? false;
+  }
 
   void _handleEnrollmentChange(bool newValue) {
     setState(() {
@@ -35,6 +61,29 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             yearTextController.text,
             enrolledValue,
           ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all required fields')),
+      );
+    }
+  }
+
+  void _updateStudent() {
+    if (_formKey.currentState?.validate() ?? false) {
+      if (widget.id != null) {
+        context.read<FormBloc>().add(UpdateData(
+              widget.id!,
+              firstNameTextController.text,
+              lastNameTextController.text,
+              courseTextController.text,
+              yearTextController.text,
+              enrolledValue,
+            ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Student ID is missing')),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all required fields')),
@@ -74,7 +123,11 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                     ),
                     TextButton(
                       onPressed: () {
-                        _addStudent();
+                        if ((widget.firstName ?? "").isNotEmpty) {
+                          _updateStudent();
+                        } else {
+                          _addStudent();
+                        }
                       },
                       style: TextButton.styleFrom(
                         backgroundColor: Colors.blue,
@@ -84,9 +137,11 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text(
-                        'Add',
-                        style: TextStyle(
+                      child: Text(
+                        ((widget.firstName ?? "").isNotEmpty)
+                            ? 'Update'
+                            : 'Add',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -95,9 +150,11 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                     )
                   ],
                 ),
-                const Text(
-                  'Add student',
-                  style: TextStyle(
+                Text(
+                  ((widget.firstName ?? "").isNotEmpty)
+                      ? 'Update student'
+                      : 'Add student',
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                   ),
@@ -109,6 +166,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                   courseTextController: courseTextController,
                   yearTextController: yearTextController,
                   enrollmentChange: _handleEnrollmentChange,
+                  enrolledValue: enrolledValue,
                 ),
               ],
             ),

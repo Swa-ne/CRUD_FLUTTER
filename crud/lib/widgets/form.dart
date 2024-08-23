@@ -10,6 +10,7 @@ class FormWidget extends StatefulWidget {
   final TextEditingController courseTextController;
   final TextEditingController yearTextController;
   final ValueChanged<bool> enrollmentChange;
+  final bool enrolledValue;
 
   const FormWidget({
     super.key,
@@ -19,6 +20,7 @@ class FormWidget extends StatefulWidget {
     required this.courseTextController,
     required this.yearTextController,
     required this.enrollmentChange,
+    required this.enrolledValue,
   });
 
   @override
@@ -65,6 +67,7 @@ class _FormWidgetState extends State<FormWidget> {
               ),
               SwitchEnrolled(
                 enrollmentChange: widget.enrollmentChange,
+                enrolledValue: widget.enrolledValue,
               ),
             ],
           ),

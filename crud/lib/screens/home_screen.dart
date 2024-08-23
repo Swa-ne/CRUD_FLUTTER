@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future<void> _onRefresh() async {
+  Future<void> onRefresh() async {
     context.read<StudentsBloc>().add(StudentsRefreshEvent());
   }
 
@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: const BottomSheetWidget(),
       ),
     );
+    onRefresh();
   }
 
   @override
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return const Text("No student in the database");
               }
               return RefreshIndicator(
-                onRefresh: _onRefresh,
+                onRefresh: onRefresh,
                 child: StudentList(students: state.student),
               );
             }
