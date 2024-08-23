@@ -54,7 +54,8 @@ export const addStudentController = async (req: Request, res: Response) => {
 };
 export const updateStudentController = async (req: Request, res: Response) => {
     try {
-        const { user_id, first_name, last_name, course, year, enrolled } = req.body;
+        const { user_id } = req.params;
+        const { first_name, last_name, course, year, enrolled } = req.body;
         if (!user_id) return res.status(404).json({ 'error': "Student not found" });
 
         const student = await updateStudent(user_id, first_name, last_name, course, year, enrolled);

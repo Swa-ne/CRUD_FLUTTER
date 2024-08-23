@@ -41,7 +41,7 @@ app.use(cookieParser())
 app.get("/students", getStudentsController);
 app.get("/student/:user_id", getStudentController);
 app.post("/add", addStudentController);
-app.put("/update", updateStudentController);
+app.put("/update/:user_id", updateStudentController);
 app.delete("/delete/:user_id", removeStudentController);
 
 
