@@ -1,6 +1,8 @@
 import 'package:crud/blocs/form_bloc.dart';
 import 'package:crud/blocs/form_event.dart';
 import 'package:crud/blocs/form_state.dart';
+import 'package:crud/main.dart';
+import 'package:crud/models/student.dart';
 import 'package:crud/widgets/form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +14,7 @@ class BottomSheetWidget extends StatefulWidget {
   final String? course;
   final String? year;
   final bool? enrolled;
+  final Function(StudentModel)? onStudentUpdated;
 
   const BottomSheetWidget({
     super.key,
@@ -21,6 +24,7 @@ class BottomSheetWidget extends StatefulWidget {
     this.course,
     this.year,
     this.enrolled,
+    this.onStudentUpdated,
   });
 
   @override
@@ -71,14 +75,25 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   void _updateStudent() {
     if (_formKey.currentState?.validate() ?? false) {
       if (widget.id != null) {
-        context.read<FormBloc>().add(UpdateData(
-              widget.id!,
-              firstNameTextController.text,
-              lastNameTextController.text,
-              courseTextController.text,
-              yearTextController.text,
-              enrolledValue,
-            ));
+        widget.onStudentUpdated!(
+          StudentModel(
+              id: widget.id!,
+              firstName: firstNameTextController.text,
+              lastName: lastNameTextController.text,
+              course: courseTextController.text,
+              year: yearTextController.text,
+              enrolled: enrolledValue),
+        );
+        context.read<FormBloc>().add(
+              UpdateData(
+                widget.id!,
+                firstNameTextController.text,
+                lastNameTextController.text,
+                courseTextController.text,
+                yearTextController.text,
+                enrolledValue,
+              ),
+            );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Student ID is missing')),
@@ -97,7 +112,12 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
       listener: (context, state) {
         if (state is FormLoading) {
         } else if (state is FormLoaded) {
-          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MainApp(),
+            ),
+          );
         } else if (state is FormError) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Server Error")),
