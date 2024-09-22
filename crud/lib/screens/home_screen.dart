@@ -30,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: const BottomSheetWidget(),
       ),
     );
-    onRefresh();
   }
 
   @override
@@ -54,8 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }
             if (state is StudentsErrorState) {
-              return Center(
-                child: Text(state.errorMessage),
+              return const Center(
+                child: Text("No internet connection."),
               );
             }
             return const SizedBox.shrink();
